@@ -14,6 +14,7 @@ import (
 	"github.com/influxdata/kapacitor/keyvalue"
 	"github.com/influxdata/kapacitor/models"
 	"github.com/influxdata/kapacitor/services/alerta"
+	"github.com/influxdata/kapacitor/services/dingtalk"
 	"github.com/influxdata/kapacitor/services/hipchat"
 	"github.com/influxdata/kapacitor/services/httpd"
 	"github.com/influxdata/kapacitor/services/httppost"
@@ -109,6 +110,9 @@ type Service struct {
 	}
 	HTTPPostService interface {
 		Handler(httppost.HandlerConfig, ...keyvalue.T) alert.Handler
+	}
+	DingtalkService interface {
+		Handler(dingtalk.HandlerConfig, ...keyvalue.T) alert.Handler
 	}
 	SensuService interface {
 		Handler(sensu.HandlerConfig, ...keyvalue.T) (alert.Handler, error)
@@ -821,6 +825,14 @@ func (s *Service) createHandlerFromSpec(spec HandlerSpec) (handler, error) {
 			return handler{}, err
 		}
 		h = s.MQTTService.Handler(c, ctx...)
+		h = newExternalHandler(h)
+	case "dingtalk":
+		c := dingtalk.HandlerConfig{}
+		err = decodeOptions(spec.Options, &c)
+		if err != nil {
+			return handler{}, err
+		}
+		h = s.DingtalkService.Handler(c, ctx...)
 		h = newExternalHandler(h)
 	case "opsgenie":
 		c := opsgenie.HandlerConfig{}

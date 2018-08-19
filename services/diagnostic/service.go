@@ -249,6 +249,12 @@ func (s *Service) NewHTTPPostHandler() *HTTPPostHandler {
 	}
 }
 
+func (s *Service) NewDingtalkHandler() *DingtalkHandler {
+	return &DingtalkHandler{
+		l: s.Logger.With(String("service", "dingtalk")),
+	}
+}
+
 func (s *Service) NewSensuHandler() *SensuHandler {
 	return &SensuHandler{
 		l: s.Logger.With(String("service", "sensu")),

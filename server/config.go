@@ -18,6 +18,7 @@ import (
 	"github.com/influxdata/kapacitor/services/consul"
 	"github.com/influxdata/kapacitor/services/deadman"
 	"github.com/influxdata/kapacitor/services/diagnostic"
+	"github.com/influxdata/kapacitor/services/dingtalk"
 	"github.com/influxdata/kapacitor/services/dns"
 	"github.com/influxdata/kapacitor/services/ec2"
 	"github.com/influxdata/kapacitor/services/file_discovery"
@@ -98,6 +99,7 @@ type Config struct {
 	Talk       talk.Config       `toml:"talk" override:"talk"`
 	Telegram   telegram.Config   `toml:"telegram" override:"telegram"`
 	VictorOps  victorops.Config  `toml:"victorops" override:"victorops"`
+	Dingtalk   dingtalk.Config   `toml:"dingtalk" override:"dingtalk"`
 
 	// Discovery for scraping
 	Scraper         []scraper.Config          `toml:"scraper" override:"scraper,element-key=name"`
@@ -147,6 +149,7 @@ func NewConfig() *Config {
 
 	c.Collectd = collectd.NewConfig()
 	c.OpenTSDB = opentsdb.NewConfig()
+	c.Dingtalk = dingtalk.NewConfig()
 
 	c.Alerta = alerta.NewConfig()
 	c.HipChat = hipchat.NewConfig()

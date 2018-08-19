@@ -28,6 +28,7 @@ import (
 	"github.com/influxdata/kapacitor/services/consul"
 	"github.com/influxdata/kapacitor/services/deadman"
 	"github.com/influxdata/kapacitor/services/diagnostic"
+	"github.com/influxdata/kapacitor/services/dingtalk"
 	"github.com/influxdata/kapacitor/services/dns"
 	"github.com/influxdata/kapacitor/services/ec2"
 	"github.com/influxdata/kapacitor/services/file_discovery"
@@ -229,6 +230,7 @@ func New(c *Config, buildInfo BuildInfo, diagService *diagnostic.Service) (*Serv
 
 	// Append Alert integration services
 	s.appendAlertaService()
+	s.appendDingtalkService()
 	s.appendHipChatService()
 	s.appendKafkaService()
 	if err := s.appendMQTTService(); err != nil {
@@ -578,6 +580,21 @@ func (s *Server) appendMQTTService() error {
 	s.SetDynamicService("mqtt", srv)
 	s.AppendService("mqtt", srv)
 	return nil
+}
+
+func (s *Server) appendDingtalkService() {
+	c := s.config.Dingtalk
+	d := s.DiagService.NewDingtalkHandler()
+	srv := dingtalk.NewService(c, d)
+
+	s.TaskMaster.DingtalkService = srv
+	s.AlertService.DingtalkService = srv
+
+	s.SetDynamicService("dingtalk", srv)
+	s.AppendService("dingtalk", srv)
+
+	// s.AppendService("dingtalk", s.DingtalkService)
+	// return nil
 }
 
 func (s *Server) appendOpsGenieService() {

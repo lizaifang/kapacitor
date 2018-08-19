@@ -17,6 +17,7 @@ import (
 	"github.com/influxdata/kapacitor/models"
 	alertservice "github.com/influxdata/kapacitor/services/alert"
 	"github.com/influxdata/kapacitor/services/alerta"
+	"github.com/influxdata/kapacitor/services/dingtalk"
 	"github.com/influxdata/kapacitor/services/ec2"
 	"github.com/influxdata/kapacitor/services/hipchat"
 	"github.com/influxdata/kapacitor/services/httppost"
@@ -805,6 +806,23 @@ func (h *SNMPTrapHandler) WithContext(ctx ...keyvalue.T) snmptrap.Diagnostic {
 	fields := logFieldsFromContext(ctx)
 
 	return &SNMPTrapHandler{
+		l: h.l.With(fields...),
+	}
+}
+
+// Dingtalk handler
+type DingtalkHandler struct {
+	l Logger
+}
+
+func (h *DingtalkHandler) Error(msg string, err error) {
+	h.l.Error(msg, Error(err))
+}
+
+func (h *DingtalkHandler) WithContext(ctx ...keyvalue.T) dingtalk.Diagnostic {
+	fields := logFieldsFromContext(ctx)
+
+	return &DingtalkHandler{
 		l: h.l.With(fields...),
 	}
 }

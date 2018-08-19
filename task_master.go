@@ -19,6 +19,7 @@ import (
 	"github.com/influxdata/kapacitor/server/vars"
 	alertservice "github.com/influxdata/kapacitor/services/alert"
 	"github.com/influxdata/kapacitor/services/alerta"
+	"github.com/influxdata/kapacitor/services/dingtalk"
 	ec2 "github.com/influxdata/kapacitor/services/ec2/client"
 	"github.com/influxdata/kapacitor/services/hipchat"
 	"github.com/influxdata/kapacitor/services/httpd"
@@ -120,6 +121,9 @@ type TaskMaster struct {
 	}
 	MQTTService interface {
 		Handler(mqtt.HandlerConfig, ...keyvalue.T) alert.Handler
+	}
+	DingtalkService interface {
+		Handler(dingtalk.HandlerConfig, ...keyvalue.T) alert.Handler
 	}
 
 	OpsGenieService interface {
@@ -272,6 +276,7 @@ func (tm *TaskMaster) New(id string) *TaskMaster {
 	n.InfluxDBService = tm.InfluxDBService
 	n.SMTPService = tm.SMTPService
 	n.MQTTService = tm.MQTTService
+	n.DingtalkService = tm.DingtalkService
 	n.OpsGenieService = tm.OpsGenieService
 	n.OpsGenie2Service = tm.OpsGenie2Service
 	n.VictorOpsService = tm.VictorOpsService
